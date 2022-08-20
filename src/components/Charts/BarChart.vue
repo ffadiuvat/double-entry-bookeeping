@@ -12,7 +12,7 @@
         :stroke="gridColor"
         :stroke-width="gridThickness"
         stroke-linecap="round"
-        fill="transparent"
+        fill="transparent" 
       />
 
       <!-- zero line -->

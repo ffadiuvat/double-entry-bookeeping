@@ -84,6 +84,12 @@ yarn
 yarn electron:serve
 ```
 
+### Run In Windows
+
+you will need to install postgresql in your windows [https://www.postgresql.org/download/windows/](https://www.postgresql.org/download/windows/)
+
+after you successfully install postgresql in windows, you will be able to `yarn electron:serve`
+
 ## Contributions and Community
 
 There are many ways you can contribute even if you don't code:

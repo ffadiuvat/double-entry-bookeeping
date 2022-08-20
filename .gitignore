@@ -6,3 +6,4 @@ tmp/
 temp/
 ormconfig-production.ts
 dist_electron/
+log_creds.txt

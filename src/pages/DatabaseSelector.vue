@@ -242,7 +242,7 @@ export default {
   },
   async mounted() {
     await this.setFiles();
-
+    ipcRenderer.invoke('check-postgres');
     if (fyo.store.isDevelopment) {
       window.ds = this;
     }

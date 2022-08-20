@@ -4,14 +4,17 @@ import {
   app,
   BrowserWindow,
   BrowserWindowConstructorOptions,
-  protocol,
+  protocol
 } from 'electron';
 import Store from 'electron-store';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
+import { DataSource } from 'typeorm';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import registerAppLifecycleListeners from './main/registerAppLifecycleListeners';
 import registerAutoUpdaterListeners from './main/registerAutoUpdaterListeners';
+import registerDataSource from './main/registerDataSource';
+import registerIpcBackendAction from './main/registerIpcBackendActionListeners';
 import registerIpcMainActionListeners from './main/registerIpcMainActionListeners';
 import registerIpcMainMessageListeners from './main/registerIpcMainMessageListeners';
 import registerProcessListeners from './main/registerProcessListeners';
@@ -28,11 +31,23 @@ export class Main {
   WIDTH = 1200;
   HEIGHT = process.platform === 'win32' ? 826 : 800;
 
+  dataSource: DataSource | undefined;
+
   constructor() {
     this.icon = this.isDevelopment
-      ? path.resolve('./build/icon.png')
-      : path.join(__dirname, 'icons', '512x512.png');
+    ? path.resolve('./build/icon.png')
+    : path.join(__dirname, 'icons', '512x512.png');
 
+    this.initConfig();
+    // register database connection
+    registerDataSource()
+    .catch(e => {
+      console.error(e);
+      process.exit(1);
+    })
+  }
+
+  initConfig(){
     protocol.registerSchemesAsPrivileged([
       { scheme: 'app', privileges: { secure: true, standard: true } },
     ]);
@@ -42,7 +57,6 @@ export class Main {
     }
 
     Store.initRenderer();
-
     this.registerListeners();
     if (this.isMac && this.isDevelopment) {
       app.dock.setIcon(this.icon);
@@ -68,6 +82,7 @@ export class Main {
   registerListeners() {
     registerIpcMainMessageListeners(this);
     registerIpcMainActionListeners(this);
+    registerIpcBackendAction();
     registerAutoUpdaterListeners(this);
     registerAppLifecycleListeners(this);
     registerProcessListeners(this);
